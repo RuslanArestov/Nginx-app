@@ -72,7 +72,7 @@ jobs:
           chmod 600 /tmp/bastion_key
       
           # Запускаем SSH-туннель в фоновом режиме
-          ssh -fN -i /tmp/bastion_key -L 6443:10.0.1.30:6443 user_admin@158.160.38.96
+          ssh -fN -i /tmp/bastion_key -o StrictHostKeyChecking=no -L 6443:10.0.1.30:6443 user_admin@158.160.38.96
           
           # Ждём немного, чтобы туннель успел подняться
           sleep 10
