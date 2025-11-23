@@ -19,10 +19,8 @@ jobs:
       - name: Install Yandex Cloud CLI and login
         shell: bash
         run: |
-          # Установка YC
           curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
           export PATH="$HOME/yandex-cloud/bin:$PATH"
-          yc --version
 
       - name: Build and push Docker image
         shell: bash
@@ -32,19 +30,16 @@ jobs:
           IMAGE="cr.yandex/crp4j5bli6ctb3qlf1kr/nginx-app"
           TAG="${GITHUB_REF##*/}"
 
-          # Сборка приложения
           git clone https://github.com/RuslanArestov/Nginx-app.git app
           cd app
           docker build -t $IMAGE .
 
-          # Настройка YC и Docker для авторизации
           cat > key.json <<EOF
           ${{ secrets.YANDEX_CONTAINER_REGISTRY_AUTH }}
           EOF
           $HOME/yandex-cloud/bin/yc config set service-account-key key.json
           $HOME/yandex-cloud/bin/yc container registry configure-docker
 
-          # Пушим образы сразу с двумя тегами: latest и SHA
           docker tag $IMAGE $IMAGE:$TAG
           docker push $IMAGE
           docker push $IMAGE:$TAG
@@ -69,14 +64,10 @@ jobs:
 
       - name: Setup SSH tunnel to Bastion
         run: |
-          # Создаём временный файл с приватным ключом
           echo "${{ secrets.BASTION_KEY }}" > /tmp/bastion_key
           chmod 600 /tmp/bastion_key
       
-          # Запускаем SSH-туннель в фоновом режиме
           ssh -fN -i /tmp/bastion_key -o StrictHostKeyChecking=no -L 6443:10.0.1.30:6443 user_admin@158.160.38.96
-          
-          # Ждём немного, чтобы туннель успел подняться
           sleep 10
   
       - name: Update Deployment in K8s
