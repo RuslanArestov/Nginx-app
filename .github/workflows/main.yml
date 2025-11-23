@@ -49,7 +49,7 @@ jobs:
 
       - name: Save tag
         id: vars
-        run: echo "TAG=${GITHUB_REF##*/}" >> $GITHUB_ENV
+        run: echo "tag=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
 
   deploy:
     runs-on: ubuntu-latest
@@ -83,5 +83,5 @@ jobs:
           export PATH="$HOME/yandex-cloud/bin:$PATH"
           IMAGE="cr.yandex/crp4j5bli6ctb3qlf1kr/nginx-app"
           kubectl set image deployment/nginx-app \
-            nginx-app=$IMAGE:${{ env.TAG }} \
+            nginx-app=$IMAGE:${{ needs.build_and_push.outputs.tag }} \
             -n app
