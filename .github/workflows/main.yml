@@ -27,7 +27,7 @@ jobs:
         run: |
           export PATH="$HOME/yandex-cloud/bin:$PATH"
 
-          IMAGE="cr.yandex/crp4j5bli6ctb3qlf1kr/nginx-app"
+          IMAGE="cr.yandex/crp4r5m3k7i3hs000jfo/nginx-app"
           TAG="${GITHUB_REF##*/}"
 
           git clone https://github.com/RuslanArestov/Nginx-app.git app
@@ -67,14 +67,14 @@ jobs:
           echo "${{ secrets.BASTION_KEY }}" > /tmp/bastion_key
           chmod 600 /tmp/bastion_key
       
-          ssh -fN -i /tmp/bastion_key -o StrictHostKeyChecking=no -L 6443:10.0.1.30:6443 user_admin@158.160.38.96
+          ssh -fN -i /tmp/bastion_key -o StrictHostKeyChecking=no -L 6443:10.0.1.22:6443 user_admin@89.169.156.188
           sleep 10
   
       - name: Update Deployment in K8s
         shell: bash
         run: |
           export PATH="$HOME/yandex-cloud/bin:$PATH"
-          IMAGE="cr.yandex/crp4j5bli6ctb3qlf1kr/nginx-app"
+          IMAGE="cr.yandex/crp4r5m3k7i3hs000jfo/nginx-app"
           kubectl set image deployment/nginx-app \
             nginx-app=$IMAGE:${{ needs.build_and_push.outputs.TAG }} \
             -n app
